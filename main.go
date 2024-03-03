@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -11,9 +13,13 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var (
-	token         string
+const (
 	commandPrefix string = "!"
+)
+
+var (
+	token  string
+	apiUrl string
 )
 
 func main() {
@@ -22,8 +28,8 @@ func main() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-
 	token = os.Getenv("DISCORD_TOKEN")
+	apiUrl = os.Getenv("API_URL")
 
 	// Create a new Discord session using the provided bot token.
 	dg, err := discordgo.New("Bot " + token)
@@ -59,7 +65,6 @@ func main() {
 // This function will be called (due to AddHandler above) when the bot receives
 // the "ready" event from Discord.
 func ready(s *discordgo.Session, event *discordgo.Ready) {
-
 	// Set the playing status.
 	s.UpdateGameStatus(0, "!airhorn")
 }
@@ -74,7 +79,17 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 	s.ChannelMessageSend(m.ChannelID, m.Content)
 
-	if m.Content == "current" {
-		s.ChannelMessageSend(m.ChannelID, "asdasdasd")
+	if m.Content == "getevents" {
+
+		resp, err := http.Get(apiUrl + "/tracks/current")
+		if err != nil {
+			log.Fatalln(err)
+		}
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		fmt.Print(body)
+		s.ChannelMessageSend(m.ChannelID, "yeslad")
 	}
 }
