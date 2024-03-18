@@ -32,30 +32,6 @@ func (a API) GetNextEvent() (Event, error) {
 	return getNextEvent(a.URL)
 }
 
-func getNextEvent(url string) (Event, error) {
-	var nextEvent Event
-	resp, err := http.Get(url + "/events/next")
-	if err != nil {
-		logger.Error().Err(err).Msg("Cannot Get API Response")
-		return nextEvent, err
-	}
-	if resp.StatusCode != 200 {
-		errorMessage := fmt.Sprintf(
-			"Status Code From %s: %s",
-			url,
-			strconv.Itoa(resp.StatusCode))
-		logger.Error().Msg(errorMessage)
-		return nextEvent, errors.New(errorMessage)
-	}
-	body, err := ioutil.ReadAll(resp.Body)
-	err = json.Unmarshal(body, &nextEvent)
-	if err != nil {
-		logger.Error().Err(err).Msg("Cannot Marshal JSON from Response")
-		return nextEvent, err
-	}
-	return nextEvent, nil
-}
-
 func (a API) GetNextEventParticipants() ([]EventParticipant, error) {
 	var participants []EventParticipant
 	var nextEvent, err = getNextEvent(a.URL)
@@ -88,4 +64,28 @@ func (a API) GetUpcomingEvents() ([]Event, error) {
 		return upcomingEvents, err
 	}
 	return upcomingEvents, nil
+}
+
+func getNextEvent(url string) (Event, error) {
+	var nextEvent Event
+	resp, err := http.Get(url + "/events/next")
+	if err != nil {
+		logger.Error().Err(err).Msg("Cannot Get API Response")
+		return nextEvent, err
+	}
+	if resp.StatusCode != 200 {
+		errorMessage := fmt.Sprintf(
+			"Status Code From %s: %s",
+			url,
+			strconv.Itoa(resp.StatusCode))
+		logger.Error().Msg(errorMessage)
+		return nextEvent, errors.New(errorMessage)
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	err = json.Unmarshal(body, &nextEvent)
+	if err != nil {
+		logger.Error().Err(err).Msg("Cannot Marshal JSON from Response")
+		return nextEvent, err
+	}
+	return nextEvent, nil
 }

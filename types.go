@@ -3,10 +3,18 @@ package main
 // INPUTS
 type HandleNewParticipantInput struct {
 	Username  string `json:"username"`
-	GiftedBy  string `json:"gifted_by"`
 	DiscordID string `json:"discord_id"`
 	ChannelID string `json:"channel_id"`
 	RoleID    string `json:"role_id"`
+}
+
+type HandleGiftedParticipantInput struct {
+	HandleNewParticipantInput
+	GiftedBy string `json:"gifted_by"`
+}
+
+type HandleTransferredParticipantInput struct {
+	HandleNewParticipantInput
 }
 
 type HandleCreateEventInput struct {
