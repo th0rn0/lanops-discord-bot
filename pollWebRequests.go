@@ -19,6 +19,7 @@ func pollWebRequests() {
 	authorized.POST("/participants/new", handleNewParticipant)
 	authorized.POST("/participants/gifted", handleGiftedParticipant)
 	authorized.POST("/participants/transferred", handleTransferredParticipant)
+	authorized.POST("/participants/remove", handleRemoveParticipant)
 
 	authorized.POST("/events/create", handleCreateEvent)
 

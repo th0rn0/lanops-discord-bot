@@ -6,6 +6,7 @@ type HandleNewParticipantInput struct {
 	DiscordID string `json:"discord_id"`
 	ChannelID string `json:"channel_id"`
 	RoleID    string `json:"role_id"`
+	NoMessage bool   `json:"no_message"`
 }
 
 type HandleGiftedParticipantInput struct {
@@ -14,6 +15,10 @@ type HandleGiftedParticipantInput struct {
 }
 
 type HandleTransferredParticipantInput struct {
+	HandleNewParticipantInput
+}
+
+type HandleRemoveParticipant struct {
 	HandleNewParticipantInput
 }
 
