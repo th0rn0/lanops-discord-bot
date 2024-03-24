@@ -6,12 +6,13 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func connect(s *discordgo.Session, event *discordgo.Connect) {
-	s.ChannelMessageSend(discordMainChannelID, "I AM AWAKE AT LAST")
-}
+// func connect(s *discordgo.Session, event *discordgo.Connect) {
+// 	s.ChannelMessageSend(discordMainChannelID, "I AM AWAKE AT LAST")
+// }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	var returnString = "Default Message. If you are seeing this, Corey, Trevor... You fucked up!"
+	var sendMessage = false
 
 	// Ignore all messages created by the bot itself
 	if m.Author.ID == s.State.User.ID {
@@ -26,6 +27,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		} else {
 			returnString = formatNextEventMessage(nextEvent)
 		}
+		sendMessage = true
 	}
 
 	if m.Content == commandPrefix+"get dates" {
@@ -36,6 +38,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		} else {
 			returnString = formatUpcomingEventDatesMessage(upcomingEvents)
 		}
+		sendMessage = true
 	}
 
 	if m.Content == commandPrefix+"get attendees" {
@@ -46,11 +49,13 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		} else {
 			returnString = formatEventParticipantsMessage(participants)
 		}
+		sendMessage = true
 	}
 
 	// Return the Message
-	s.ChannelMessageSend(m.ChannelID, returnString)
-
+	if sendMessage {
+		s.ChannelMessageSend(m.ChannelID, returnString)
+	}
 }
 
 func ready(s *discordgo.Session, event *discordgo.Ready) {

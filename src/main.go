@@ -29,6 +29,8 @@ var (
 )
 
 func init() {
+	var err error
+
 	logger = zerolog.New(
 		zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339},
 	).Level(zerolog.TraceLevel).With().Timestamp().Caller().Logger()
@@ -36,10 +38,7 @@ func init() {
 
 	// Env Variables
 	logger.Info().Msg("Loading Environment Variables")
-	err := godotenv.Load()
-	if err != nil {
-		logger.Fatal().Err(err).Msg("Error loading .env file")
-	}
+	godotenv.Load()
 	lanopsAPI = api.New(os.Getenv("API_URL"))
 	token = os.Getenv("DISCORD_TOKEN")
 	discordGuildID = os.Getenv("DISCORD_SERVER_ID")
@@ -67,7 +66,7 @@ func main() {
 	// Register the Events for Discord Go
 	dg.AddHandler(ready)
 	dg.AddHandler(messageCreate)
-	dg.AddHandler(connect)
+	// dg.AddHandler(connect)
 
 	// Set the Intents
 	dg.Identify.Intents = discordgo.IntentsGuilds | discordgo.IntentsGuildMessages | discordgo.IntentsGuildVoiceStates

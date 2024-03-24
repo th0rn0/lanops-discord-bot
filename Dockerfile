@@ -1,15 +1,17 @@
 FROM golang:1.22-alpine
 
-
 WORKDIR /app
 
-COPY go.mod ./
+ENV CGO_ENABLED=1
+RUN apk add --no-cache gcc musl-dev
+
+COPY src/go.mod src/go.sum ./
 RUN go mod download
 
-COPY *.go ./
+COPY src/ .
 
-RUN go build -o /go-docker-demo
+RUN go build -ldflags='-s -w -extldflags "-static"' -o /discord-bot
 
 EXPOSE 8080
 
-CMD [ "/go-docker-demo" ]
+CMD [ "/discord-bot" ]

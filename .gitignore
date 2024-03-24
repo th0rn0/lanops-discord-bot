@@ -1,2 +1,4 @@
 .env
 .vscode
+discord-bot
+bot.db
