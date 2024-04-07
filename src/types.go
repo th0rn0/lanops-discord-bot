@@ -31,6 +31,11 @@ type HandleCreateEventInput struct {
 	Address string `json:"address"`
 }
 
+type HandleMessageChannelInput struct {
+	ChannelID string `json:"channel_id"`
+	Message   string `json:"message"`
+}
+
 // OUTPUTS
 type HandleCreateEventOutput struct {
 	RoleID    string `json:"role_id"`

@@ -23,5 +23,7 @@ func pollWebRequests() {
 
 	authorized.POST("/events/create", handleCreateEvent)
 
+	authorized.POST("/message/channel", handleMessageChannel)
+
 	r.Run(":8888")
 }
