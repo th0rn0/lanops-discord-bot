@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"lanops/discord-bot/api"
+	"lanops/discord-bot/manager"
 	"strconv"
 )
 
-func formatEventParticipantsMessage(participants []api.EventParticipant) string {
+func formatEventParticipantsMessage(participants []manager.EventParticipant) string {
 	var returnMessage = "\nAttendees for Next Event:\n"
 	for _, participant := range participants {
 		returnMessage += fmt.Sprintf(
@@ -15,7 +15,7 @@ func formatEventParticipantsMessage(participants []api.EventParticipant) string 
 	return returnMessage
 }
 
-func formatUpcomingEventDatesMessage(events []api.Event) string {
+func formatUpcomingEventDatesMessage(events []manager.Event) string {
 	var returnMessage = "\nUpcoming Events:\n"
 	for _, event := range events {
 		returnMessage += fmt.Sprintf(
@@ -24,7 +24,7 @@ func formatUpcomingEventDatesMessage(events []api.Event) string {
 	return returnMessage
 }
 
-func formatNextEventMessage(event api.Event) string {
+func formatNextEventMessage(event manager.Event) string {
 	var returnMessage = "\nNext Event:\n"
 	returnMessage += event.Name + "\n"
 	returnMessage += event.Start + " to " + event.End + "\n"

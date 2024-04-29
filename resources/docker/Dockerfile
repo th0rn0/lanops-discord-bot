@@ -13,6 +13,6 @@ COPY src/ .
 
 RUN go build -ldflags='-s -w -extldflags "-static"' -o /discord-bot
 
-EXPOSE 8080
+EXPOSE 9888
 
 CMD [ "/discord-bot" ]

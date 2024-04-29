@@ -2,13 +2,11 @@ package main
 
 import (
 	"fmt"
+	"slices"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
-
-// func connect(s *discordgo.Session, event *discordgo.Connect) {
-// 	s.ChannelMessageSend(discordMainChannelID, "I AM AWAKE AT LAST")
-// }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	var returnString = "Default Message. If you are seeing this, Corey, Trevor... You fucked up!"
@@ -52,6 +50,16 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		sendMessage = true
 	}
 
+	if slices.Contains(m.Member.Roles, discordJukeBoxRoleID) {
+		if strings.HasPrefix(m.Content, commandPrefix+"jb") {
+			logger.Info().Msg("Message Create Event - Jukebox Control - Triggered")
+			jukeboxCommand := strings.Split(m.Content, " ")
+			fmt.Println(m.Member.Roles)
+			returnString = jukeboxAPI.Control(jukeboxCommand[1])
+			sendMessage = true
+		}
+	}
+
 	// Return the Message
 	if sendMessage {
 		s.ChannelMessageSend(m.ChannelID, returnString)
@@ -60,5 +68,5 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 func ready(s *discordgo.Session, event *discordgo.Ready) {
 	// Set the playing status.
-	s.UpdateGameStatus(0, "BOT GO BRRR")
+	s.UpdateGameStatus(0, "Initiating GoonSwoon")
 }

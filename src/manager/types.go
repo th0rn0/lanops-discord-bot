@@ -1,4 +1,4 @@
-package api
+package manager
 
 type API struct {
 	URL string

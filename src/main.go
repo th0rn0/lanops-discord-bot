@@ -1,7 +1,8 @@
 package main
 
 import (
-	"lanops/discord-bot/api"
+	"lanops/discord-bot/jukebox"
+	"lanops/discord-bot/manager"
 	"os"
 	"os/signal"
 	"syscall"
@@ -20,11 +21,13 @@ const (
 
 var (
 	token                string
-	lanopsAPI            api.API
+	lanopsAPI            manager.API
+	jukeboxAPI           jukebox.API
 	dg                   *discordgo.Session
 	db                   *gorm.DB
 	discordGuildID       string
 	discordMainChannelID string
+	discordJukeBoxRoleID string
 	logger               zerolog.Logger
 )
 
@@ -39,10 +42,12 @@ func init() {
 	// Env Variables
 	logger.Info().Msg("Loading Environment Variables")
 	godotenv.Load()
-	lanopsAPI = api.New(os.Getenv("API_URL"))
+	lanopsAPI = manager.New(os.Getenv("MANAGER_URL"))
+	jukeboxAPI = jukebox.New(os.Getenv("JUKEBOX_URL"))
 	token = os.Getenv("DISCORD_TOKEN")
 	discordGuildID = os.Getenv("DISCORD_SERVER_ID")
 	discordMainChannelID = os.Getenv("DISCORD_MAIN_CHANNEL_ID")
+	discordJukeBoxRoleID = os.Getenv("DISCORD_JUKEBOX_ROLE_ID")
 
 	// Database
 	logger.Info().Msg("Connecting to Database")
@@ -58,8 +63,10 @@ func init() {
 	if err != nil {
 		logger.Fatal().Err(err).Msg("Error Creating Discord Session")
 	}
+
 	logger.Info().Msg("Initalization Complete")
 }
+
 func main() {
 	logger.Info().Msg("Starting Discord Bot")
 
