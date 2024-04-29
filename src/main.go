@@ -43,7 +43,7 @@ func init() {
 	logger.Info().Msg("Loading Environment Variables")
 	godotenv.Load()
 	lanopsAPI = manager.New(os.Getenv("MANAGER_URL"))
-	jukeboxAPI = jukebox.New(os.Getenv("JUKEBOX_URL"))
+	jukeboxAPI = jukebox.New(os.Getenv("JUKEBOX_URL"), os.Getenv("JUKEBOX_USERNAME"), os.Getenv("JUKEBOX_PASSWORD"))
 	token = os.Getenv("DISCORD_TOKEN")
 	discordGuildID = os.Getenv("DISCORD_SERVER_ID")
 	discordMainChannelID = os.Getenv("DISCORD_MAIN_CHANNEL_ID")

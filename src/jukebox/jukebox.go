@@ -11,6 +11,11 @@ import (
 )
 
 var (
+	username string
+	password string
+)
+
+var (
 	logger zerolog.Logger
 )
 
@@ -20,8 +25,10 @@ func init() {
 	).Level(zerolog.TraceLevel).With().Timestamp().Caller().Logger()
 }
 
-func New(URL string) API {
+func New(URL string, un string, pw string) API {
 	a := API{URL: URL}
+	username = un
+	password = pw
 	return a
 }
 
@@ -32,7 +39,7 @@ func (a API) Control(command string) string {
 	if err != nil {
 		logger.Error().Err(err).Msg("Cannot Get API Response")
 	}
-	req.SetBasicAuth("admin", "changeme")
+	req.SetBasicAuth(username, password)
 	switch command {
 	case "start":
 		logger.Info().Msg("Jukebox Control - START")
