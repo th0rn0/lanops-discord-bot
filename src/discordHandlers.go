@@ -55,7 +55,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			logger.Info().Msg("Message Create Event - Jukebox Currently playing - Triggered")
 			returnString = jukeboxAPI.GetCurrentTrack()
 			sendMessage = true
-		} else if slices.Contains(m.Member.Roles, discordJukeBoxRoleID) {
+		} else if slices.Contains(m.Member.Roles, discordJukeBoxControlRoleID) {
 			if strings.HasPrefix(m.Content, commandPrefix+"jb") {
 				logger.Info().Msg("Message Create Event - Jukebox Control - Triggered")
 				jukeboxCommand := strings.Split(m.Content, " ")

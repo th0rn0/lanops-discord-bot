@@ -28,7 +28,7 @@ var (
 	db                           *gorm.DB
 	discordGuildID               string
 	discordMainChannelID         string
-	discordJukeBoxRoleID         string
+	discordJukeBoxControlRoleID  string
 	discordJukeboxControlEnabled bool
 	logger                       zerolog.Logger
 )
@@ -49,7 +49,7 @@ func init() {
 	token = os.Getenv("DISCORD_TOKEN")
 	discordGuildID = os.Getenv("DISCORD_SERVER_ID")
 	discordMainChannelID = os.Getenv("DISCORD_MAIN_CHANNEL_ID")
-	discordJukeBoxRoleID = os.Getenv("DISCORD_JUKEBOX_ROLE_ID")
+	discordJukeBoxControlRoleID = os.Getenv("DISCORD_JUKEBOX_CONTROL_ROLE_ID")
 	discordJukeboxControlEnabled, _ = strconv.ParseBool(os.Getenv("DISCORD_JUKEBOX_CONTROL_ENABLED"))
 
 	// Database
