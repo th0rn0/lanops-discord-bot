@@ -73,7 +73,7 @@ func (a API) Control(command string) string {
 			logger.Error().Msg(errorMessage)
 			returnString = "Something went wrong " + errorMessage
 		} else {
-			returnString = "Jukebox - Stop Polling Spotify"
+			returnString = "Jukebox - Stopped Polling Spotify"
 		}
 	case "skip":
 		logger.Info().Msg("Jukebox Control - SKIP")
