@@ -1,7 +1,9 @@
 package jukebox
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
@@ -94,5 +96,32 @@ func (a API) Control(command string) string {
 		returnString = "Command not Recognized"
 	}
 
+	return returnString
+}
+
+func (a API) GetCurrentTrack() string {
+	var getCurrentTrackOutput GetCurrentTrackOutput
+	var returnString string
+
+	resp, err := http.Get(a.URL + "/tracks/current")
+	if err != nil {
+		logger.Error().Err(err).Msg("Cannot Get API Response")
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	err = json.Unmarshal(body, &getCurrentTrackOutput)
+	if err != nil {
+		logger.Error().Err(err).Msg("Cannot Marshal JSON from Response")
+	}
+	if resp.StatusCode != 202 {
+		errorMessage := fmt.Sprintf(
+			"Status Code From %s: %s",
+			a.URL+"/tracks/current",
+			strconv.Itoa(resp.StatusCode))
+		logger.Error().Msg(errorMessage)
+		returnString = "Something went wrong " + errorMessage
+	} else {
+		returnString = fmt.Sprintf("Currently Playing: %s - %s", getCurrentTrackOutput.Name, getCurrentTrackOutput.Artists[0].Name)
+	}
 	return returnString
 }

@@ -5,6 +5,7 @@ import (
 	"lanops/discord-bot/manager"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -20,15 +21,16 @@ const (
 )
 
 var (
-	token                string
-	lanopsAPI            manager.API
-	jukeboxAPI           jukebox.API
-	dg                   *discordgo.Session
-	db                   *gorm.DB
-	discordGuildID       string
-	discordMainChannelID string
-	discordJukeBoxRoleID string
-	logger               zerolog.Logger
+	token                        string
+	lanopsAPI                    manager.API
+	jukeboxAPI                   jukebox.API
+	dg                           *discordgo.Session
+	db                           *gorm.DB
+	discordGuildID               string
+	discordMainChannelID         string
+	discordJukeBoxRoleID         string
+	discordJukeboxControlEnabled bool
+	logger                       zerolog.Logger
 )
 
 func init() {
@@ -48,6 +50,7 @@ func init() {
 	discordGuildID = os.Getenv("DISCORD_SERVER_ID")
 	discordMainChannelID = os.Getenv("DISCORD_MAIN_CHANNEL_ID")
 	discordJukeBoxRoleID = os.Getenv("DISCORD_JUKEBOX_ROLE_ID")
+	discordJukeboxControlEnabled, _ = strconv.ParseBool(os.Getenv("DISCORD_JUKEBOX_CONTROL_ENABLED"))
 
 	// Database
 	logger.Info().Msg("Connecting to Database")
