@@ -50,7 +50,7 @@ func handleCreateEvent(c *gin.Context) {
 		logger.Error().Err(err).Msg("Error Creating Guild Scheduled Event")
 	}
 
-	_, err = dg.ChannelMessageSend(discordChannel.ID, "First - all you're event are belong to us!")
+	_, err = dg.ChannelMessageSend(discordChannel.ID, "First - all your event are belong to us!")
 	if err != nil {
 		logger.Error().Err(err).Msg("Error Sending Discord message")
 	}
