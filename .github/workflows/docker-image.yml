@@ -16,6 +16,14 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v4
+      - 
+        name: Discord Webhook Action - Build Start
+        uses: tsickert/discord-webhook@v5.3.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          embed-title: ${{ github.repository }} - Build Started!
+          embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          embed-description: ${{ github.event.head_commit.message }}
       -
         name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -33,3 +41,20 @@ jobs:
           file: resources/docker/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/lanops-discord-bot:latest
+      - 
+        name: Discord Webhook Action - Build Success
+        uses: tsickert/discord-webhook@v5.3.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          embed-title: ${{ github.repository }} - Build Success!
+          embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          embed-description: ${{ github.event.head_commit.message }}
+      - 
+        name: Discord Webhook Action - Build Failure
+        if: failure()
+        uses: tsickert/discord-webhook@v5.3.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          embed-title: ${{ github.repository }} - Build Failure!
+          embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          embed-description: ${{ github.event.head_commit.message }}
