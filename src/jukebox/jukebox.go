@@ -91,6 +91,22 @@ func (a API) Control(command string) string {
 		} else {
 			returnString = "Jukebox - Song Skipped"
 		}
+	case "ban":
+		logger.Info().Msg("Jukebox Control - BAN TRACK")
+		resp, err := client.Do(req)
+		if err != nil {
+			logger.Error().Err(err).Msg("Cannot Get API Response")
+		}
+		if resp.StatusCode != 202 {
+			errorMessage := fmt.Sprintf(
+				"Status Code From %s: %s",
+				a.URL+"/player/skip?ban=true",
+				strconv.Itoa(resp.StatusCode))
+			logger.Error().Msg(errorMessage)
+			returnString = "Something went wrong " + errorMessage
+		} else {
+			returnString = "Jukebox - Song Banned"
+		}
 	default:
 		logger.Info().Msg("Jukebox Control - Unknown Command")
 		returnString = "Command not Recognized"
