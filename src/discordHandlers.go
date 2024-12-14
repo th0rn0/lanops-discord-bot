@@ -73,5 +73,5 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 func ready(s *discordgo.Session, event *discordgo.Ready) {
 	// Set the playing status.
-	s.UpdateGameStatus(0, "Initiating GoonSwoon")
+	s.UpdateGameStatus(0, "Lan Organization")
 }
