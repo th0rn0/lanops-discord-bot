@@ -31,6 +31,7 @@ var (
 	discordJukeBoxControlRoleID  string
 	discordJukeboxControlEnabled bool
 	logger                       zerolog.Logger
+	memeNameChangerUserID        string
 )
 
 func init() {
@@ -51,6 +52,7 @@ func init() {
 	discordMainChannelID = os.Getenv("DISCORD_MAIN_CHANNEL_ID")
 	discordJukeBoxControlRoleID = os.Getenv("DISCORD_JUKEBOX_CONTROL_ROLE_ID")
 	discordJukeboxControlEnabled, _ = strconv.ParseBool(os.Getenv("DISCORD_JUKEBOX_CONTROL_ENABLED"))
+	memeNameChangerUserID = os.Getenv("MEME_NAME_CHANGER_USER_ID")
 
 	// Database
 	logger.Info().Msg("Connecting to Database")

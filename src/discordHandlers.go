@@ -65,6 +65,15 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 	}
 
+	// Memes
+	if m.Author.ID == memeNameChangerUserID {
+		err := dg.GuildMemberNickname(discordGuildID, memeNameChangerUserID, "Dumbbell Chrome Remover")
+		if err != nil {
+			fmt.Println("error changing nickname,", err)
+			return
+		}
+	}
+
 	// Return the Message
 	if sendMessage {
 		s.ChannelMessageSend(m.ChannelID, returnString)
