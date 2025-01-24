@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"slices"
 	"strings"
 
@@ -67,7 +68,11 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	// Memes
 	if m.Author.ID == memeNameChangerUserID {
-		err := dg.GuildMemberNickname(discordGuildID, memeNameChangerUserID, "Dumbbell Chrome Remover")
+		userNames := []string{"Dumbbell Chrome Remover", "Jay2Win", "Perry", "Frank Reynolds", "Scraninator", "Lord Scranian", "Eddy Hall"}
+		randomIndex := rand.Intn(len(userNames))
+		randomString := userNames[randomIndex]
+
+		err := dg.GuildMemberNickname(discordGuildID, memeNameChangerUserID, randomString)
 		if err != nil {
 			fmt.Println("error changing nickname,", err)
 			return
