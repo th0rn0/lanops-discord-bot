@@ -68,7 +68,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	// Memes
 	if m.Author.ID == memeNameChangerUserID {
-		userNames := []string{"Dumbbell Chrome Remover", "Jay2Win", "Perry", "Frank Reynolds", "Scraninator", "Lord Scranian", "Eddy Hall"}
+		userNames := []string{"Dumbbell Chrome Remover", "Jay2Win", "Perry", "Frank Reynolds", "Scraninator", "Lord Scranian", "Eddy Hall", "Scran Master"}
 		randomIndex := rand.Intn(len(userNames))
 		randomString := userNames[randomIndex]
 
