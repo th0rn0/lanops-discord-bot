@@ -79,6 +79,16 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			"Scran Master",
 			"Scran2D2",
 			"Bruce Scranner",
+			"Scranuel Jackson",
+			"Protein Baggins",
+			"Scran Solo",
+			"Jason Gainham",
+			"Captain Ameri-scran",
+			"Whoopi Swoleberg",
+			"Scranakin Skywalker",
+			"Obi-Wan Scranobi",
+			"The Swole Ranger",
+			"Gains Bond",
 		}
 		randomIndex := rand.Intn(len(userNames))
 		randomString := userNames[randomIndex]
