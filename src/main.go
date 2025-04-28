@@ -32,6 +32,7 @@ var (
 	discordJukeboxControlEnabled bool
 	logger                       zerolog.Logger
 	memeNameChangerUserID        string
+	googleDriveUploadDirectoryID string
 )
 
 func init() {
@@ -53,6 +54,7 @@ func init() {
 	discordJukeBoxControlRoleID = os.Getenv("DISCORD_JUKEBOX_CONTROL_ROLE_ID")
 	discordJukeboxControlEnabled, _ = strconv.ParseBool(os.Getenv("DISCORD_JUKEBOX_CONTROL_ENABLED"))
 	memeNameChangerUserID = os.Getenv("MEME_NAME_CHANGER_USER_ID")
+	googleDriveUploadDirectoryID = os.Getenv("GOOGLE_DRIVE_UPLOAD_DIRECTORY_ID")
 
 	// Database
 	logger.Info().Msg("Connecting to Database")
