@@ -66,6 +66,18 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 	}
 
+	// Media Archiver
+	if slices.Contains(m.Member.Roles, archiveChannelMediaRoleID) {
+		if m.Content == commandPrefix+"media archive" {
+			logger.Info().Msg("Message Create Event - Image Archive - Triggered")
+			returnString = "Archiving Channel Media!"
+
+			go archiveChannelMedia(m)
+
+			sendMessage = true
+		}
+	}
+
 	// Memes
 	if m.Author.ID == memeNameChangerUserID {
 		userNames := []string{
@@ -95,7 +107,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 		err := dg.GuildMemberNickname(discordGuildID, memeNameChangerUserID, randomString)
 		if err != nil {
-			fmt.Println("error changing nickname,", err)
+			logger.Error().Err(err).Msg("Error changing nickname")
 			return
 		}
 	}

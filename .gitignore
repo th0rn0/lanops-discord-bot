@@ -2,3 +2,5 @@
 .vscode
 discord-bot
 bot.db
+tmp/
+googlekey.json
