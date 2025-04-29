@@ -66,13 +66,13 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 	}
 
-	// Image Archiver
-	if slices.Contains(m.Member.Roles, archiveChannelImagesRoleID) {
-		if m.Content == commandPrefix+"image archive" {
+	// Media Archiver
+	if slices.Contains(m.Member.Roles, archiveChannelMediaRoleID) {
+		if m.Content == commandPrefix+"media archive" {
 			logger.Info().Msg("Message Create Event - Image Archive - Triggered")
-			returnString = "Archiving Channel"
+			returnString = "Archiving Channel Media!"
 
-			go archiveChannelImages(m)
+			go archiveChannelMedia(m)
 
 			sendMessage = true
 		}

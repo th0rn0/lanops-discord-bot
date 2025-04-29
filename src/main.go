@@ -21,20 +21,20 @@ const (
 )
 
 var (
-	token                          string
-	lanopsAPI                      manager.API
-	jukeboxAPI                     jukebox.API
-	dg                             *discordgo.Session
-	db                             *gorm.DB
-	discordGuildID                 string
-	discordMainChannelID           string
-	discordJukeBoxControlRoleID    string
-	discordJukeboxControlEnabled   bool
-	logger                         zerolog.Logger
-	memeNameChangerUserID          string
-	googleDriveUploadDirectoryID   string
-	archiveChannelImagesTmpDirPath string
-	archiveChannelImagesRoleID     string
+	token                         string
+	lanopsAPI                     manager.API
+	jukeboxAPI                    jukebox.API
+	dg                            *discordgo.Session
+	db                            *gorm.DB
+	discordGuildID                string
+	discordMainChannelID          string
+	discordJukeBoxControlRoleID   string
+	discordJukeboxControlEnabled  bool
+	logger                        zerolog.Logger
+	memeNameChangerUserID         string
+	googleDriveUploadDirectoryID  string
+	archiveChannelMediaTmpDirPath string
+	archiveChannelMediaRoleID     string
 )
 
 func init() {
@@ -56,7 +56,7 @@ func init() {
 	discordJukeBoxControlRoleID = os.Getenv("DISCORD_JUKEBOX_CONTROL_ROLE_ID")
 	discordJukeboxControlEnabled, _ = strconv.ParseBool(os.Getenv("DISCORD_JUKEBOX_CONTROL_ENABLED"))
 	memeNameChangerUserID = os.Getenv("MEME_NAME_CHANGER_USER_ID")
-	archiveChannelImagesRoleID = os.Getenv("ARCHIVE_CHANNEL_IMAGES_ROLE_ID")
+	archiveChannelMediaRoleID = os.Getenv("ARCHIVE_CHANNEL_MEDIA_ROLE_ID")
 
 	// Database
 	logger.Info().Msg("Connecting to Database")

@@ -14,12 +14,12 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func archiveChannelImages(m *discordgo.MessageCreate) {
+func archiveChannelMedia(m *discordgo.MessageCreate) {
 	var lastMessageID string
 	filesToUpload := false
 	downloadCount := 0
-	archiveChannelImagesTmpDirPath = strings.TrimSuffix(os.Getenv("ARCHIVE_CHANNEL_IMAGES_TMP_DIR_PATH"), "/")
-	downloadPath := archiveChannelImagesTmpDirPath + "/attachments"
+	archiveChannelMediaTmpDirPath = strings.TrimSuffix(os.Getenv("ARCHIVE_CHANNEL_MEDIA_TMP_DIR_PATH"), "/")
+	downloadPath := archiveChannelMediaTmpDirPath + "/attachments"
 	parentFolderID := os.Getenv("GOOGLE_DRIVE_UPLOAD_DIRECTORY_ID")
 
 	channel, err := dg.Channel(m.ChannelID)
@@ -42,8 +42,8 @@ func archiveChannelImages(m *discordgo.MessageCreate) {
 		for _, msg := range messages {
 			if len(msg.Attachments) > 0 {
 				for _, attachment := range msg.Attachments {
-					if !utils.IsImage(attachment.Filename) {
-						continue // Skip non-image files
+					if !utils.IsMedia(attachment.Filename) {
+						continue
 					}
 					logger.Info().Msg(fmt.Sprintf("Attachment: %s (URL: %s)\n", attachment.Filename, attachment.URL))
 					bytes := make([]byte, 8)
@@ -60,7 +60,7 @@ func archiveChannelImages(m *discordgo.MessageCreate) {
 						})
 					if err != nil {
 						logger.Error().Err(err).Msg("Failed to download")
-						go addMessageToQueue(m.ChannelID, fmt.Sprintf("Failed to download a image: %s", err))
+						go addMessageToQueue(m.ChannelID, fmt.Sprintf("Failed to download media: %s", err))
 					} else {
 						filesToUpload = true
 						downloadCount++
@@ -70,12 +70,12 @@ func archiveChannelImages(m *discordgo.MessageCreate) {
 		}
 		lastMessageID = messages[len(messages)-1].ID // Set the last message ID for pagination
 	}
-	logger.Info().Msg(fmt.Sprintf("Images to upload: %s", strconv.Itoa(downloadCount)))
-	addMessageToQueue(m.ChannelID, fmt.Sprintf("Images to upload: %s", strconv.Itoa(downloadCount)))
+	logger.Info().Msg(fmt.Sprintf("Media to upload: %s", strconv.Itoa(downloadCount)))
+	addMessageToQueue(m.ChannelID, fmt.Sprintf("Media to upload: %s", strconv.Itoa(downloadCount)))
 	if filesToUpload {
 		zipPath := fmt.Sprintf(
 			"%s/%s-%s-attachments.zip",
-			archiveChannelImagesTmpDirPath,
+			archiveChannelMediaTmpDirPath,
 			time.Now().Format("2006-01-02_15-04-05"),
 			channel.Name)
 		err = utils.ZipDirectory(downloadPath, zipPath)
@@ -106,8 +106,8 @@ func archiveChannelImages(m *discordgo.MessageCreate) {
 }
 
 func cleanup(channelID string) {
-	if err := utils.DeleteDir(archiveChannelImagesTmpDirPath); err != nil {
+	if err := utils.DeleteDir(archiveChannelMediaTmpDirPath); err != nil {
 		logger.Error().Err(err).Msg("Error deleting tmp folder")
-		addMessageToQueue(channelID, fmt.Sprintf("Error deleting tmp directory: %s", archiveChannelImagesTmpDirPath))
+		addMessageToQueue(channelID, fmt.Sprintf("Error deleting tmp directory: %s", archiveChannelMediaTmpDirPath))
 	}
 }
