@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -68,12 +69,20 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	// Media Archiver
 	if slices.Contains(m.Member.Roles, archiveChannelMediaRoleID) {
-		if m.Content == commandPrefix+"media archive" {
+		if strings.HasPrefix(m.Content, commandPrefix+"media archive") {
 			logger.Info().Msg("Message Create Event - Image Archive - Triggered")
 			returnString = "Archiving Channel Media!"
-
-			go archiveChannelMedia(m)
-
+			var err error
+			daysRangeInt := 0
+			archiveCommand := strings.Split(m.Content, " ")
+			if len(archiveCommand) == 3 {
+				daysRangeInt, err = strconv.Atoi(archiveCommand[2])
+			}
+			if err != nil {
+				returnString = "Invalid Days Parameter"
+			} else {
+				go archiveChannelMedia(m, daysRangeInt)
+			}
 			sendMessage = true
 		}
 	}

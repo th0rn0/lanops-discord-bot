@@ -5,7 +5,7 @@ import (
 )
 
 func pollMessageQueue() {
-	ticker := time.NewTicker(20 * time.Second)
+	ticker := time.NewTicker(10 * time.Second)
 	quit := make(chan struct{})
 	for {
 		select {
