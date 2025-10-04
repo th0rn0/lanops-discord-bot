@@ -35,6 +35,7 @@ var (
 	googleDriveUploadDirectoryID  string
 	archiveChannelMediaTmpDirPath string
 	archiveChannelMediaRoleID     string
+	workflowsEndpoint             string
 )
 
 func init() {
@@ -57,6 +58,7 @@ func init() {
 	discordJukeboxControlEnabled, _ = strconv.ParseBool(os.Getenv("DISCORD_JUKEBOX_CONTROL_ENABLED"))
 	memeNameChangerUserID = os.Getenv("MEME_NAME_CHANGER_USER_ID")
 	archiveChannelMediaRoleID = os.Getenv("ARCHIVE_CHANNEL_MEDIA_ROLE_ID")
+	workflowsEndpoint = os.Getenv("WORKFLOWS_ENDPOINT")
 
 	// Database
 	logger.Info().Msg("Connecting to Database")

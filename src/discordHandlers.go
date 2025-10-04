@@ -1,14 +1,20 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
+	"net/http"
 	"slices"
 	"strconv"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
+
+var webhookEnabled = false
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	var returnString = "Default Message. If you are seeing this, Corey, Trevor... You fucked up!"
@@ -123,10 +129,70 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 	}
 
+	// 8 Ball
+	if webhookEnabled && strings.HasPrefix(m.Content, commandPrefix+"8ball") {
+		// Trim the command part from the beginning
+		question := strings.TrimSpace(m.Content[len(commandPrefix+"8ball"):])
+		if question == "" {
+			// Handle case where no question was asked
+			returnString = "You need to ask a question!"
+			sendMessage = true
+		} else {
+			returnString = fmt.Sprintf("You asked: %s", question)
+			sendMessage = true
+		}
+
+		// Do something with the question
+		payload := WebhookPayload{
+			Question: question,
+			Message:  m,
+		}
+
+		data, err := json.Marshal(payload)
+		if err != nil {
+			log.Println("Error marshalling payload:", err)
+			return
+		}
+
+		resp, err := http.Post(
+			workflowsEndpoint,
+			"application/json",
+			bytes.NewBuffer(data),
+		)
+		if err != nil {
+			log.Println("Error sending webhook:", err)
+			return
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusNoContent {
+			log.Println("Unexpected webhook response status:", resp.Status)
+		}
+
+	}
+	// Admin command to enable the webhook
+	if slices.Contains(m.Member.Roles, archiveChannelMediaRoleID) {
+		if strings.HasPrefix(m.Content, commandPrefix+"enablewebhook") {
+			// Replace with your admin ID
+			if !webhookEnabled {
+				webhookEnabled = true
+			} else {
+				webhookEnabled = false
+			}
+			returnString = "Webhook set"
+			sendMessage = true
+		}
+	}
+
 	// Return the Message
 	if sendMessage {
 		s.ChannelMessageSend(m.ChannelID, returnString)
 	}
+}
+
+type WebhookPayload struct {
+	Question string                   `json:"question"`
+	Message  *discordgo.MessageCreate `json:"message"`
 }
 
 func ready(s *discordgo.Session, event *discordgo.Ready) {
