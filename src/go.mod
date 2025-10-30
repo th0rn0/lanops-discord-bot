@@ -1,8 +1,8 @@
 module lanops/discord-bot
 
-go 1.23.0
+go 1.24.0
 
-toolchain go1.23.6
+toolchain go1.24.9
 
 require (
 	github.com/bwmarrin/discordgo v0.27.1
@@ -10,6 +10,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/joho/godotenv v1.5.1
 	github.com/rs/zerolog v1.32.0
+	golang.org/x/exp v0.0.0-20251023183803-a4bb9ffd2546
 	golang.org/x/oauth2 v0.29.0
 	google.golang.org/api v0.230.0
 	gorm.io/driver/sqlite v1.5.5
