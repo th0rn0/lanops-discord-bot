@@ -11,8 +11,10 @@ RUN go mod download
 
 COPY src/ .
 
-RUN go build -ldflags='-s -w -extldflags "-static"' -o /discord-bot
+RUN ls
+
+RUN go build -ldflags='-s -w -extldflags "-static"' -o bin/discord-bot ./cmd/discord-bot
 
 EXPOSE 9888
 
-CMD [ "/discord-bot" ]
+CMD [ "bin/discord-bot" ]
