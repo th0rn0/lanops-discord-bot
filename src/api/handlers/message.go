@@ -5,8 +5,12 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm/logger"
 )
+
+type HandleMessageChannelInput struct {
+	ChannelID string `json:"channel_id"`
+	Content   string `json:"message"`
+}
 
 func (s Client) MessageChannel(c *gin.Context) {
 	var handleMessageChannelInput HandleMessageChannelInput
@@ -14,10 +18,10 @@ func (s Client) MessageChannel(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, "Cannot Marshal JSON")
 		return
 	}
-	logger.Info().Msg(fmt.Sprintf(
-		"Send Channel Message: %s", handleMessageChannelInput.Message))
-	addMessageToQueue(
+	s.logger.Info().Msg(fmt.Sprintf(
+		"Send Channel Message: %s", handleMessageChannelInput.Content))
+	s.msgQueue.Create(
 		handleMessageChannelInput.ChannelID,
-		handleMessageChannelInput.Message)
+		handleMessageChannelInput.Content)
 	c.JSON(http.StatusOK, "OK")
 }

@@ -11,9 +11,8 @@ import (
 	"google.golang.org/api/option"
 )
 
-func UploadToDrive(filePath string, parentFolderID string) (string, error) {
+func UploadToDrive(filePath string, parentFolderID string, googleCreds string) (string, error) {
 	ctx := context.Background()
-	googleCreds := os.Getenv("GOOGLE_KEY_JSON_BASE64")
 
 	jsonBytes, err := base64.StdEncoding.DecodeString(googleCreds)
 	if err != nil {

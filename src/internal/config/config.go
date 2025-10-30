@@ -22,11 +22,6 @@ func Load() Config {
 		log.Fatal("❌ DISCORD_TOKEN not set in environment")
 	}
 
-	discordAdminRoleId := os.Getenv("DISCORD_ADMIN_ROLE_ID")
-	if discordAdminRoleId == "" {
-		log.Fatal("❌ DISCORD_ADMIN_ROLE_ID not set in environment")
-	}
-
 	discordCommandPrefix := os.Getenv("DISCORD_COMMAND_PREFIX")
 	if discordCommandPrefix == "" {
 		log.Fatal("❌ DISCORD_COMMAND_PREFIX not set in environment")
@@ -37,14 +32,14 @@ func Load() Config {
 		log.Fatal("❌ DISCORD_GUILD_ID not set in environment")
 	}
 
-	discordMemeNameChangerUserID := os.Getenv("MEME_NAME_CHANGER_USER_ID")
+	discordMemeNameChangerUserID := os.Getenv("DISCORD_MEME_NAME_CHANGER_USER_ID")
 	if discordMemeNameChangerUserID == "" {
-		log.Fatal("❌ MEME_NAME_CHANGER_USER_ID not set in environment")
+		log.Fatal("❌ DISCORD_MEME_NAME_CHANGER_USER_ID not set in environment")
 	}
 
-	discordArchiveChannelMediaRoleID := os.Getenv("ARCHIVE_CHANNEL_MEDIA_ROLE_ID")
-	if discordArchiveChannelMediaRoleID == "" {
-		log.Fatal("❌ ARCHIVE_CHANNEL_MEDIA_ROLE_ID not set in environment")
+	discordMediaArchiverRoleID := os.Getenv("DISCORD_MEDIA_ARCHIVER_ROLE_ID")
+	if discordMediaArchiverRoleID == "" {
+		log.Fatal("❌ DISCORD_MEDIA_ARCHIVER_ROLE_ID not set in environment")
 	}
 
 	// API
@@ -68,18 +63,33 @@ func Load() Config {
 	}
 
 	// LanOps API Address
-	lanOpsAPIAddr := os.Getenv("8BALL_ENDPOINT")
+	lanOpsAPIAddr := os.Getenv("LANOPS_API_ADDR")
 	if lanOpsAPIAddr == "" {
-		log.Fatal("❌ 8BALL_ENDPOINT not set in environment")
+		log.Fatal("❌ LANOPS_API_ADDR not set in environment")
+	}
+
+	// Media Archiver
+	mediaArchiverGoogleDriveUploadDirId := os.Getenv("MEDIA_ARCHIVER_GOOGLE_DRIVE_UPLOAD_DIR_ID")
+	if mediaArchiverGoogleDriveUploadDirId == "" {
+		log.Fatal("❌ MEDIA_ARCHIVER_GOOGLE_DRIVE_UPLOAD_DIR_ID not set in environment")
+	}
+
+	mediaArchiverTempUploadDirPath := os.Getenv("MEDIA_ARCHIVER_TEMP_UPLOAD_DIR_PATH")
+	if mediaArchiverTempUploadDirPath == "" {
+		log.Fatal("❌ MEDIA_ARCHIVER_TEMP_UPLOAD_DIR_PATH not set in environment")
+	}
+
+	mediaArchiverGoogleDriveKey := os.Getenv("MEDIA_ARCHIVER_GOOGLE_DRIVE_KEY_JSON_BASE64")
+	if mediaArchiverGoogleDriveKey == "" {
+		log.Fatal("❌ MEDIA_ARCHIVER_GOOGLE_DRIVE_KEY_JSON_BASE64 not set in environment")
 	}
 
 	discord := Discord{
-		CommandPrefix:             discordCommandPrefix,
-		Token:                     discordToken,
-		GuildId:                   discordGuildId,
-		AdminRoleId:               discordAdminRoleId,
-		MemeNameChangerUserID:     discordMemeNameChangerUserID,
-		ArchiveChannelMediaRoleID: discordArchiveChannelMediaRoleID,
+		CommandPrefix:         discordCommandPrefix,
+		Token:                 discordToken,
+		GuildId:               discordGuildId,
+		MemeNameChangerUserId: discordMemeNameChangerUserID,
+		MediaArchiverRoleId:   discordMediaArchiverRoleID,
 	}
 
 	api := ApiConfig{
@@ -88,11 +98,18 @@ func Load() Config {
 		Port:          apiPort,
 	}
 
+	mediaArchiver := MediaArchiver{
+		GoogleDriveUploadDirId: mediaArchiverGoogleDriveUploadDirId,
+		TmpUploadDirPath:       mediaArchiverTempUploadDirPath,
+		GoogleDriveKey:         mediaArchiverGoogleDriveKey,
+	}
+
 	return Config{
 		DbPath:            dbPath,
 		Api:               api,
-		LanopsAPIAddr:     lanOpsAPIAddr,
-		EightBallEndPoint: eightBallEndPoint,
+		LanopsApiAddr:     lanOpsAPIAddr,
+		EightBallEndpoint: eightBallEndPoint,
 		Discord:           discord,
+		MediaArchiver:     mediaArchiver,
 	}
 }

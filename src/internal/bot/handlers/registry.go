@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"lanops/discord-bot/internal/bot/handlers/eightball"
 	eventsAttendees "lanops/discord-bot/internal/bot/handlers/events/attendees"
 	eventsDates "lanops/discord-bot/internal/bot/handlers/events/dates"
-	eventsGet "lanops/discord-bot/internal/bot/handlers/events/get"
-	help "lanops/discord-bot/internal/bot/handlers/help"
+	eventsNext "lanops/discord-bot/internal/bot/handlers/events/next"
+	"lanops/discord-bot/internal/bot/handlers/help"
+	"lanops/discord-bot/internal/bot/handlers/mediaarchiver"
 
 	"lanops/discord-bot/internal/channels"
 	"lanops/discord-bot/internal/config"
@@ -31,14 +33,11 @@ func init() {
 	// Help
 	Register("help", help.Handler)
 	// Events
-	Register("get event", eventsGet.Handler)
-	Register("get dates", eventsDates.Handler)
-	Register("get attendees", eventsAttendees.Handler)
+	Register("event next", eventsNext.Handler)
+	Register("event dates", eventsDates.Handler)
+	Register("event attendees", eventsAttendees.Handler)
 	// Media Archiver
-	// TODO - Add me for the rest
-	Register("get attendees", eventsAttendees.Handler)
-	// Misc
-	Register("get attendees", eventsAttendees.Handler)
-	Register("get attendees", eventsAttendees.Handler)
-
+	Register("media archive", mediaarchiver.Handler)
+	// 8Ball
+	Register("8ball", eightball.Handler)
 }

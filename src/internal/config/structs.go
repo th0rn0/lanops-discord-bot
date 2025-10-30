@@ -3,9 +3,10 @@ package config
 type Config struct {
 	DbPath            string
 	Api               ApiConfig
-	LanopsAPIAddr     string
-	EightBallEndPoint string
+	LanopsApiAddr     string
+	EightBallEndpoint string
 	Discord           Discord
+	MediaArchiver     MediaArchiver
 }
 
 type ApiConfig struct {
@@ -16,10 +17,15 @@ type ApiConfig struct {
 }
 
 type Discord struct {
-	CommandPrefix             string
-	Token                     string
-	GuildId                   string
-	AdminRoleId               string
-	MemeNameChangerUserID     string
-	ArchiveChannelMediaRoleID string
+	CommandPrefix         string
+	Token                 string
+	GuildId               string
+	MemeNameChangerUserId string
+	MediaArchiverRoleId   string
+}
+
+type MediaArchiver struct {
+	GoogleDriveUploadDirId string
+	TmpUploadDirPath       string
+	GoogleDriveKey         string
 }

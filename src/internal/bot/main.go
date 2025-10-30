@@ -4,6 +4,7 @@ import (
 	"lanops/discord-bot/internal/bot/handlers"
 	"lanops/discord-bot/internal/channels"
 	"lanops/discord-bot/internal/config"
+	"lanops/discord-bot/internal/msgqueue"
 	"time"
 
 	"os"
@@ -11,15 +12,14 @@ import (
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
-	"gorm.io/gorm"
 )
 
-func New(cfg config.Config, discordClient *discordgo.Session, db *gorm.DB, msgCh chan<- channels.MsgCh) (*Client, error) {
+func New(cfg config.Config, discordSession *discordgo.Session, msgQueue msgqueue.Client, msgCh chan<- channels.MsgCh) (*Client, error) {
 	client := &Client{
-		cfg:   cfg,
-		dg:    discordClient,
-		db:    db,
-		msgCh: msgCh,
+		cfg:      cfg,
+		dg:       discordSession,
+		msgQueue: msgQueue,
+		msgCh:    msgCh,
 	}
 
 	// Register the Events for Discord Go
@@ -27,7 +27,7 @@ func New(cfg config.Config, discordClient *discordgo.Session, db *gorm.DB, msgCh
 		handlers.OnMessage(s, m, cfg, msgCh)
 	})
 	client.dg.AddHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
-		handlers.OnReady(s, m, cfg, msgCh)
+		handlers.OnReady(s)
 	})
 
 	// Set the Intents
@@ -43,7 +43,7 @@ func (client *Client) Run() error {
 	}
 	defer client.dg.Close()
 
-	go client.pollMessageQueue()
+	go client.pollMsgQueue()
 
 	// Wait for CTRL+C
 	stop := make(chan os.Signal, 1)
@@ -53,30 +53,23 @@ func (client *Client) Run() error {
 	return nil
 }
 
-type QueueMessage struct {
-	ID        int    `gorm:"primaryKey" json:"id"`
-	ChannelID string `json:"channel_id"`
-	Message   string `json:"message"`
-}
-
-func (client *Client) pollMessageQueue() {
+func (client *Client) pollMsgQueue() {
 	ticker := time.NewTicker(10 * time.Second)
 	quit := make(chan struct{})
 	for {
 		select {
 		case <-ticker.C:
-			var queueMessages []QueueMessage
-			client.db.Table("queue_messages").Find(&queueMessages)
-			if len(queueMessages) != 0 {
-				for _, queueMessage := range queueMessages {
+			msgQueue := client.msgQueue.Get()
+			if len(msgQueue) != 0 {
+				for _, queueMessage := range msgQueue {
 					_, err := client.dg.ChannelMessageSend(
 						queueMessage.ChannelID,
-						queueMessage.Message)
+						queueMessage.Content)
 					if err != nil {
 						client.msgCh <- channels.MsgCh{Err: err, Message: "Error Sending Discord message", Level: "ERROR"}
 						return
 					}
-					client.db.Delete(&queueMessage)
+					client.msgQueue.Delete(queueMessage)
 				}
 			}
 		case <-quit:

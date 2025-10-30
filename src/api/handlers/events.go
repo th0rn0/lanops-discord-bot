@@ -7,8 +7,22 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm/logger"
 )
+
+type HandleCreateEventInput struct {
+	Name    string `json:"name"`
+	Slug    string `json:"slug"`
+	URL     string `json:"url"`
+	Start   string `json:"start"`
+	End     string `json:"end"`
+	Address string `json:"address"`
+}
+
+type HandleCreateEventOutput struct {
+	RoleID    string `json:"role_id"`
+	ChannelID string `json:"channel_id"`
+	EventID   string `json:"event_id"`
+}
 
 func (s Client) CreateEvent(c *gin.Context) {
 	var handleCreateEventInput HandleCreateEventInput
@@ -17,26 +31,24 @@ func (s Client) CreateEvent(c *gin.Context) {
 		return
 	}
 
-	logger.Info().Msg(fmt.Sprintf(
-		"New Event: %s", handleCreateEventInput.Name))
+	s.logger.Info().Msg(fmt.Sprintf("New Event: %s", handleCreateEventInput.Name))
 
-	// Format Dates
 	var startTime, _ = time.Parse("2006-01-02 15:04:00", handleCreateEventInput.Start)
 	var endTime, _ = time.Parse("2006-01-02 15:04:00", handleCreateEventInput.End)
 
-	discordRole, err := dg.GuildRoleCreate(discordGuildID, &discordgo.RoleParams{
+	discordRole, err := s.discordSession.GuildRoleCreate(s.cfg.Discord.GuildId, &discordgo.RoleParams{
 		Name: handleCreateEventInput.Name + " Participant",
 	})
 	if err != nil {
-		logger.Error().Err(err).Msg("Error Creating Guild Role")
+		s.logger.Error().Err(err).Msg("Error Creating Guild Role")
 	}
 
-	discordChannel, err := dg.GuildChannelCreate(discordGuildID, handleCreateEventInput.Slug, 0)
+	discordChannel, err := s.discordSession.GuildChannelCreate(s.cfg.Discord.GuildId, handleCreateEventInput.Slug, 0)
 	if err != nil {
-		logger.Error().Err(err).Msg("Error Creating Guild Channel")
+		s.logger.Error().Err(err).Msg("Error Creating Guild Channel")
 	}
 
-	discordEvent, err := dg.GuildScheduledEventCreate(discordGuildID, &discordgo.GuildScheduledEventParams{
+	discordEvent, err := s.discordSession.GuildScheduledEventCreate(s.cfg.Discord.GuildId, &discordgo.GuildScheduledEventParams{
 		Name:               handleCreateEventInput.Name,
 		Description:        handleCreateEventInput.URL,
 		ScheduledStartTime: &startTime,
@@ -48,12 +60,12 @@ func (s Client) CreateEvent(c *gin.Context) {
 		},
 	})
 	if err != nil {
-		logger.Error().Err(err).Msg("Error Creating Guild Scheduled Event")
+		s.logger.Error().Err(err).Msg("Error Creating Guild Scheduled Event")
 	}
 
-	_, err = dg.ChannelMessageSend(discordChannel.ID, "First - all your event are belong to us!")
+	_, err = s.discordSession.ChannelMessageSend(discordChannel.ID, "First - all your event are belong to us!")
 	if err != nil {
-		logger.Error().Err(err).Msg("Error Sending Discord message")
+		s.logger.Error().Err(err).Msg("Error Sending Discord message")
 	}
 
 	handleCreateEventOutput := HandleCreateEventOutput{

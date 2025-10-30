@@ -6,13 +6,15 @@ import (
 
 	"lanops/discord-bot/api/handlers"
 	"lanops/discord-bot/internal/config"
+	"lanops/discord-bot/internal/msgqueue"
 
+	"github.com/bwmarrin/discordgo"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
 
-func SetupRouter(cfg config.Config, logger zerolog.Logger) *gin.Engine {
+func SetupRouter(msgQueue msgqueue.Client, discordSession *discordgo.Session, cfg config.Config, logger zerolog.Logger) *gin.Engine {
 	logger.Info().Msg("Loading API")
 	gin.DefaultWriter = zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}
 	r := gin.Default()
@@ -32,9 +34,9 @@ func SetupRouter(cfg config.Config, logger zerolog.Logger) *gin.Engine {
 	})
 
 	r.Use(cors.Default())
-	// Handlers
 
-	handlers := handlers.New()
+	// Handlers
+	handlers := handlers.New(msgQueue, discordSession, cfg, logger)
 	authorized := r.Group("", gin.BasicAuth(gin.Accounts{
 		cfg.Api.AdminUsername: cfg.Api.AdminPassword,
 	}))

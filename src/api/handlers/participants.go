@@ -5,8 +5,28 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm/logger"
 )
+
+type HandleNewParticipantInput struct {
+	Username  string `json:"username"`
+	DiscordID string `json:"discord_id"`
+	ChannelID string `json:"channel_id"`
+	RoleID    string `json:"role_id"`
+	NoMessage bool   `json:"no_message"`
+}
+
+type HandleGiftedParticipantInput struct {
+	HandleNewParticipantInput
+	GiftedBy string `json:"gifted_by"`
+}
+
+type HandleTransferredParticipantInput struct {
+	HandleNewParticipantInput
+}
+
+type HandleRemoveParticipant struct {
+	HandleNewParticipantInput
+}
 
 func (s Client) NewParticipant(c *gin.Context) {
 	var handleNewParticipantInput HandleNewParticipantInput
@@ -14,17 +34,17 @@ func (s Client) NewParticipant(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, "Cannot Marshal JSON")
 		return
 	}
-	logger.Info().Msg(fmt.Sprintf(
+	s.logger.Info().Msg(fmt.Sprintf(
 		"New Participant: %s", handleNewParticipantInput.Username))
 	if !handleNewParticipantInput.NoMessage {
-		addMessageToQueue(
+		s.msgQueue.Create(
 			handleNewParticipantInput.ChannelID,
 			fmt.Sprintf(
 				"New Attendee: %s", handleNewParticipantInput.Username))
 	}
 	if handleNewParticipantInput.DiscordID != "" {
-		if err := dg.GuildMemberRoleAdd(discordGuildID, handleNewParticipantInput.DiscordID, handleNewParticipantInput.RoleID); err != nil {
-			logger.Error().Err(err).Msg("Error Updating User Permissions")
+		if err := s.discordSession.GuildMemberRoleAdd(s.cfg.Discord.GuildId, handleNewParticipantInput.DiscordID, handleNewParticipantInput.RoleID); err != nil {
+			s.logger.Error().Err(err).Msg("Error Updating User Permissions")
 			c.JSON(http.StatusBadRequest, err)
 		}
 	}
@@ -37,15 +57,15 @@ func (s Client) GiftedParticipant(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, "Cannot Marshal JSON")
 		return
 	}
-	logger.Info().Msg(fmt.Sprintf(
+	s.logger.Info().Msg(fmt.Sprintf(
 		"Gifted Participant: %s", handleGiftedParticipantInput.Username))
-	addMessageToQueue(
+	s.msgQueue.Create(
 		handleGiftedParticipantInput.ChannelID,
 		fmt.Sprintf(
 			"New Attendee: %s - Gifted by %s - Such a Rinsing Geezer!", handleGiftedParticipantInput.Username, handleGiftedParticipantInput.GiftedBy))
 	if handleGiftedParticipantInput.DiscordID != "" {
-		if err := dg.GuildMemberRoleAdd(discordGuildID, handleGiftedParticipantInput.DiscordID, handleGiftedParticipantInput.RoleID); err != nil {
-			logger.Error().Err(err).Msg("Error Updating User Permissions")
+		if err := s.discordSession.GuildMemberRoleAdd(s.cfg.Discord.GuildId, handleGiftedParticipantInput.DiscordID, handleGiftedParticipantInput.RoleID); err != nil {
+			s.logger.Error().Err(err).Msg("Error Updating User Permissions")
 			c.JSON(http.StatusBadRequest, err)
 		}
 	}
@@ -58,11 +78,11 @@ func (s Client) TransferredParticipant(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, "Cannot Marshal JSON")
 		return
 	}
-	logger.Info().Msg(fmt.Sprintf(
+	s.logger.Info().Msg(fmt.Sprintf(
 		"Transferred Participant: %s", handleTransferredParticipantInput.Username))
 	if handleTransferredParticipantInput.DiscordID != "" {
-		if err := dg.GuildMemberRoleRemove(discordGuildID, handleTransferredParticipantInput.DiscordID, handleTransferredParticipantInput.RoleID); err != nil {
-			logger.Error().Err(err).Msg("Error Updating User Permissions")
+		if err := s.discordSession.GuildMemberRoleRemove(s.cfg.Discord.GuildId, handleTransferredParticipantInput.DiscordID, handleTransferredParticipantInput.RoleID); err != nil {
+			s.logger.Error().Err(err).Msg("Error Updating User Permissions")
 			c.JSON(http.StatusBadRequest, err)
 		}
 	}
@@ -75,11 +95,11 @@ func (s Client) RemoveParticipant(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, "Cannot Marshal JSON")
 		return
 	}
-	logger.Info().Msg(fmt.Sprintf(
+	s.logger.Info().Msg(fmt.Sprintf(
 		"Remove Participant: %s", handleRemoveParticipant.Username))
 	if handleRemoveParticipant.DiscordID != "" {
-		if err := dg.GuildMemberRoleRemove(discordGuildID, handleRemoveParticipant.DiscordID, handleRemoveParticipant.RoleID); err != nil {
-			logger.Error().Err(err).Msg("Error Updating User Permissions")
+		if err := s.discordSession.GuildMemberRoleRemove(s.cfg.Discord.GuildId, handleRemoveParticipant.DiscordID, handleRemoveParticipant.RoleID); err != nil {
+			s.logger.Error().Err(err).Msg("Error Updating User Permissions")
 			c.JSON(http.StatusBadRequest, err)
 		}
 	}
