@@ -1,6 +1,6 @@
 .env
 .vscode
-discord-bot
+bin/discord-bot
 bot.db
 tmp/
 googlekey.json
