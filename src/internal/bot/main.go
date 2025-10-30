@@ -4,7 +4,7 @@ import (
 	"lanops/discord-bot/internal/bot/handlers"
 	"lanops/discord-bot/internal/channels"
 	"lanops/discord-bot/internal/config"
-	"lanops/discord-bot/internal/msgqueue"
+	"lanops/discord-bot/msgqueue"
 	"time"
 
 	"os"

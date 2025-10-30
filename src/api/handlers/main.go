@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"lanops/discord-bot/internal/config"
-	"lanops/discord-bot/internal/msgqueue"
+	"lanops/discord-bot/msgqueue"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/rs/zerolog"

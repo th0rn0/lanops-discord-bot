@@ -73,7 +73,7 @@ docker run -d \
   -e MEDIA_ARCHIVER_GOOGLE_DRIVE_KEY_JSON_BASE64= \
   -p 8888:8888 \
   -v /mnt/servdata/lanops/jukebox/db:/db \
-  th0rn0/lanops-party-discord-bot:latest
+  th0rn0/lanops-discord-bot:latest
 ```
 
 ```
