@@ -1,4 +1,4 @@
-FROM golang:1.23-alpine
+FROM golang:1.24-alpine
 LABEL maintainer="Thornton Phillis (dev@th0rn0.co.uk)"
 
 WORKDIR /app
