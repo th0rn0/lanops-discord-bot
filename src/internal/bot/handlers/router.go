@@ -40,6 +40,7 @@ func OnMessage(s *discordgo.Session, m *discordgo.MessageCreate, cfg config.Conf
 			"Gains Bond",
 			"Scranny G",
 			"Scranny Devito",
+			"Jayby",
 		}
 		randomIndex := rand.Intn(len(userNames))
 		randomString := userNames[randomIndex]
