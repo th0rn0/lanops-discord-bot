@@ -10,8 +10,7 @@ trigger:
 
 steps:
 
-# ── Docker Build & Push ───────────────────────────────────────────────────────
-# Only runs on push to main or v* tags.
+# ── Docker Build ──────────────────────────────────────────────────────────────
 
   - name: discord-build-start
     image: curlimages/curl:8.7.1
@@ -22,13 +21,16 @@ steps:
     commands:
       - |
         curl -s -X POST "$DISCORD_WEBHOOK_URL" -H "Content-Type: application/json" -d "{\"embeds\":[{\"title\":\"$DRONE_REPO - $DRONE_SOURCE_BRANCH - Build Started!\",\"url\":\"$DRONE_BUILD_LINK\"}]}"
+
+  - name: build
+    image: plugins/docker
+    settings:
+      repo: th0rn0/lanops-discord-bot
+      dockerfile: resources/docker/Dockerfile
+      dry_run: true
     when:
-      ref:
-        - refs/heads/main
-        - refs/tags/**
       event:
-        - push
-        - tag
+        - pull_request
 
   - name: build-push
     image: plugins/docker
@@ -60,12 +62,6 @@ steps:
       - |
         curl -s -X POST "$DISCORD_WEBHOOK_URL" -H "Content-Type: application/json" -d "{\"embeds\":[{\"title\":\"$DRONE_REPO - $DRONE_SOURCE_BRANCH - Build Success!\",\"url\":\"$DRONE_BUILD_LINK\"}]}"
     when:
-      ref:
-        - refs/heads/main
-        - refs/tags/**
-      event:
-        - push
-        - tag
       status:
         - success
 
@@ -79,11 +75,5 @@ steps:
       - |
         curl -s -X POST "$DISCORD_WEBHOOK_URL" -H "Content-Type: application/json" -d "{\"embeds\":[{\"title\":\"$DRONE_REPO - $DRONE_SOURCE_BRANCH - Build Failure!\",\"url\":\"$DRONE_BUILD_LINK\"}]}"
     when:
-      ref:
-        - refs/heads/main
-        - refs/tags/**
-      event:
-        - push
-        - tag
       status:
         - failure
