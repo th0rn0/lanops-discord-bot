@@ -98,6 +98,7 @@ steps:
         - failure
 
 # ── Docker Build ──────────────────────────────────────────────────────────────
+# Only runs on push to main or v* tags.
 
   - name: discord-build-start
     image: curlimages/curl:8.7.1
@@ -108,6 +109,12 @@ steps:
     commands:
       - |
         curl -s -X POST "$DISCORD_WEBHOOK_URL" -H "Content-Type: application/json" -d "{\"embeds\":[{\"title\":\"$DRONE_REPO - $DRONE_SOURCE_BRANCH - Build Started!\",\"url\":\"$DRONE_BUILD_LINK\"}]}"
+    when:
+      branch:
+        - main
+      event:
+        - push
+        - tag
 
   - name: build
     image: plugins/docker
@@ -132,15 +139,28 @@ steps:
         from_secret: dockerhub_username
       password:
         from_secret: dockerhub_token
-      auto_tag: true
-      auto_tag_aliases:
+      tags:
         - latest
     when:
-      ref:
-        - refs/heads/main
-        - refs/tags/**
+      branch:
+        - main
       event:
         - push
+
+  - name: build-push-release
+    image: plugins/docker
+    settings:
+      repo: th0rn0/lanops-discord-bot
+      dockerfile: resources/docker/Dockerfile
+      username:
+        from_secret: dockerhub_username
+      password:
+        from_secret: dockerhub_token
+      tags:
+        - latest
+        - ${DRONE_TAG}
+    when:
+      event:
         - tag
 
   - name: discord-build-success
@@ -153,6 +173,11 @@ steps:
       - |
         curl -s -X POST "$DISCORD_WEBHOOK_URL" -H "Content-Type: application/json" -d "{\"embeds\":[{\"title\":\"$DRONE_REPO - $DRONE_SOURCE_BRANCH - Build Success!\",\"url\":\"$DRONE_BUILD_LINK\"}]}"
     when:
+      branch:
+        - main
+      event:
+        - push
+        - tag
       status:
         - success
 
@@ -166,5 +191,10 @@ steps:
       - |
         curl -s -X POST "$DISCORD_WEBHOOK_URL" -H "Content-Type: application/json" -d "{\"embeds\":[{\"title\":\"$DRONE_REPO - $DRONE_SOURCE_BRANCH - Build Failure!\",\"url\":\"$DRONE_BUILD_LINK\"}]}"
     when:
+      branch:
+        - main
+      event:
+        - push
+        - tag
       status:
         - failure
