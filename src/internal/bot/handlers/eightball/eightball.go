@@ -29,7 +29,7 @@ func Handler(s *discordgo.Session, m *discordgo.MessageCreate, commandParts []st
 		data, err := json.Marshal(payload)
 		if err != nil {
 			msgCh <- channels.MsgCh{Err: err, Message: "Something went wrong", Level: "ERROR"}
-			returnString = "There was a error connecting to the API"
+			s.ChannelMessageSend(m.ChannelID, "There was a error connecting to the API")
 			return
 		} else {
 			resp, err := http.Post(
@@ -39,7 +39,7 @@ func Handler(s *discordgo.Session, m *discordgo.MessageCreate, commandParts []st
 			)
 			if err != nil {
 				msgCh <- channels.MsgCh{Err: err, Message: "Something went wrong", Level: "ERROR"}
-				returnString = "There was a error connecting to the API"
+				s.ChannelMessageSend(m.ChannelID, "There was a error connecting to the API")
 				return
 			}
 			defer resp.Body.Close()

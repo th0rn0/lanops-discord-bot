@@ -58,8 +58,11 @@ func (a API) GetUpcomingEvents() ([]Event, error) {
 		return upcomingEvents, errors.New(errorMessage)
 	}
 	body, err := ioutil.ReadAll(resp.Body)
-	err = json.Unmarshal(body, &upcomingEvents)
 	if err != nil {
+		logger.Error().Err(err).Msg("Cannot Read Response Body")
+		return upcomingEvents, err
+	}
+	if err := json.Unmarshal(body, &upcomingEvents); err != nil {
 		logger.Error().Err(err).Msg("Cannot Marshal JSON from Response")
 		return upcomingEvents, err
 	}
@@ -82,8 +85,11 @@ func getNextEvent(url string) (Event, error) {
 		return nextEvent, errors.New(errorMessage)
 	}
 	body, err := ioutil.ReadAll(resp.Body)
-	err = json.Unmarshal(body, &nextEvent)
 	if err != nil {
+		logger.Error().Err(err).Msg("Cannot Read Response Body")
+		return nextEvent, err
+	}
+	if err := json.Unmarshal(body, &nextEvent); err != nil {
 		logger.Error().Err(err).Msg("Cannot Marshal JSON from Response")
 		return nextEvent, err
 	}

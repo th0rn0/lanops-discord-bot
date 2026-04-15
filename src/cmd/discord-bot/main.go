@@ -21,7 +21,6 @@ var (
 	logger zerolog.Logger
 	cfg    config.Config
 	msgCh  = make(chan channels.MsgCh, 20)
-	db     *gorm.DB
 )
 
 func main() {
