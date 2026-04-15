@@ -30,7 +30,11 @@ steps:
       dry_run: true
     when:
       event:
+        - push
         - pull_request
+      branch:
+        exclude:
+          - main
 
   - name: build-push
     image: plugins/docker
