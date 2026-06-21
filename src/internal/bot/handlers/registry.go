@@ -5,6 +5,7 @@ import (
 	eventsAttendees "lanops/discord-bot/internal/bot/handlers/events/attendees"
 	eventsDates "lanops/discord-bot/internal/bot/handlers/events/dates"
 	eventsNext "lanops/discord-bot/internal/bot/handlers/events/next"
+	eventsTimetable "lanops/discord-bot/internal/bot/handlers/events/timetable"
 	"lanops/discord-bot/internal/bot/handlers/help"
 	"lanops/discord-bot/internal/bot/handlers/mediaarchiver"
 
@@ -36,6 +37,7 @@ func init() {
 	Register("event next", eventsNext.Handler)
 	Register("event dates", eventsDates.Handler)
 	Register("event attendees", eventsAttendees.Handler)
+	Register("event timetable", eventsTimetable.Handler)
 	// Media Archiver
 	Register("media archive", mediaarchiver.Handler)
 	// 8Ball
