@@ -47,5 +47,5 @@ type EventParticipant struct {
 type EventTicket struct {
 	Name  string `json:"name"`
 	Type  string `json:"type"`
-	Price int    `json:"price"`
+	Price float64 `json:"price"`
 }
