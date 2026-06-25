@@ -38,6 +38,7 @@ func init() {
 	Register("event dates", eventsDates.Handler)
 	Register("event attendees", eventsAttendees.Handler)
 	Register("event timetable", eventsTimetable.Handler)
+	Register("event timetables", eventsTimetable.Handler)
 	// Media Archiver
 	Register("media archive", mediaarchiver.Handler)
 	// 8Ball
