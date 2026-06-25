@@ -49,3 +49,17 @@ type EventTicket struct {
 	Type  string  `json:"type"`
 	Price float64 `json:"price"`
 }
+
+type Timetable struct {
+	Name    string           `json:"name"`
+	Slug    string           `json:"slug"`
+	Status  string           `json:"status"`
+	Default bool             `json:"default"`
+	Data    []TimetableEntry `json:"data"`
+}
+
+type TimetableEntry struct {
+	StartTime   string `json:"start_time"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
