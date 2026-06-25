@@ -42,6 +42,33 @@ func (a API) GetNextEventParticipants() ([]EventParticipant, error) {
 	return participants, nil
 }
 
+func (a API) GetEventTimetables(eventSlug string) ([]Timetable, error) {
+	var timetables []Timetable
+	resp, err := http.Get(a.URL + "/events/" + eventSlug + "/timetables")
+	if err != nil {
+		logger.Error().Err(err).Msg("Cannot Get API Response")
+		return timetables, err
+	}
+	if resp.StatusCode != 200 {
+		errorMessage := fmt.Sprintf(
+			"Status Code From %s: %s",
+			a.URL,
+			strconv.Itoa(resp.StatusCode))
+		logger.Error().Msg(errorMessage)
+		return timetables, errors.New(errorMessage)
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logger.Error().Err(err).Msg("Cannot Read Response Body")
+		return timetables, err
+	}
+	if err := json.Unmarshal(body, &timetables); err != nil {
+		logger.Error().Err(err).Msg("Cannot Marshal JSON from Response")
+		return timetables, err
+	}
+	return timetables, nil
+}
+
 func (a API) GetUpcomingEvents() ([]Event, error) {
 	var upcomingEvents []Event
 	resp, err := http.Get(a.URL + "/events/upcoming")
